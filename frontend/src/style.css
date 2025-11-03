@@ -1,70 +1,6 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 
-  width: 100%;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  justify-content: flex-start;
-  flex-direction: column;
-  place-items: center;
-  min-width: 320px;
-  width: 100%;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-
-button:hover {
-  border-color: #646cff;
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-.card {
-  padding: 2em;
-}
 
 #app {
   max-width: 1920px;
@@ -153,92 +89,6 @@ button:focus-visible {
   background: #535bf2;
 }
 
-
-
-
-/* Reset some defaults */
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f4f4f6;
-}
-
-/* Header styling */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  background-color: #2c3e50;
-  color: #ecf0f1;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-.header .logo a {
-  text-decoration: none;
-  color: #ecf0f1;
-  font-size: 1.6em;
-  font-weight: bold;
-}
-
-.user-section {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.greeting {
-  font-size: 1em;
-}
-
-/* Dropdown menu */
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropbtn {
-  background-color: #3498db;
-  color: white;
-  padding: 8px 15px;
-  font-size: 0.9em;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.dropbtn:hover {
-  background-color: #2980b9;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  right: 0;
-  background-color: #ffffff;
-  min-width: 150px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
-  z-index: 1;
-}
-
-.dropdown-content a {
-  color: #2c3e50;
-  padding: 10px 15px;
-  text-decoration: none;
-  display: block;
-  transition: background-color 0.2s ease;
-}
-
-.dropdown-content a:hover {
-  background-color: #ecf0f1;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
 /* Main content styling */
 main {
   padding: 40px;
@@ -305,4 +155,223 @@ main p {
 
 .login-card button:hover {
     background-color: #535bf2;
+}
+
+
+
+:root {
+  --admin-color: #1e90ff;
+  --teller-color: #27ae60;
+  --customer-color: #9b59b6;
+  --card-bg: #ffffff;
+  --card-shadow: rgba(0, 0, 0, 0.1);
+  --header-bg: #2c3e50;
+  --text-dark: #2c3e50;
+  --text-light: #ecf0f1;
+}
+
+body {
+  margin: 0;
+  background: #f4f6f8;
+  font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text-dark);
+}
+
+a {
+  color: var(--admin-color);
+  text-decoration: none;
+}
+
+button {
+  background: var(--admin-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background: linear-gradient(90deg, #2c3e50, #34495e);
+  color: var(--text-light);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.header .logo a {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: white;
+  letter-spacing: 1px;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* DROPDOWN */
+.dropdown {
+  position: relative;
+}
+.dropbtn {
+  background: #3498db;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.dropbtn:hover {
+  background: #2980b9;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  min-width: 150px;
+  overflow: hidden;
+}
+.dropdown-content a {
+  display: block;
+  padding: 10px 15px;
+  color: var(--text-dark);
+}
+.dropdown-content a:hover {
+  background-color: #f4f4f4;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+
+
+
+/* General Dashboard Styles */
+.dashboard-container {
+  padding: 2.5rem;
+  min-height: 100vh;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Section Headers */
+.dashboard-container h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Card grid layout */
+.dashboard-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Dashboard card component */
+.dashboard-card {
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dashboard-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Table styling for transactions */
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.dashboard-table th {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  font-weight: 600;
+}
+
+.dashboard-table tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Buttons */
+.dashboard-btn {
+  padding: 0.6em 1.2em;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.dashboard-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Theming by role */
+.admin-theme {
+  background: linear-gradient(to bottom right, #656781, #aee9f8);
+}
+
+.teller-theme {
+  background: linear-gradient(to bottom right, #828291, #d0d0db);
+}
+
+.customer-theme {
+  background: linear-gradient(to bottom right, #508a7b, #c6e1d9);
+}
+
+/* Accent colors */
+.text-accent-blue {
+  color: #60a5fa;
+}
+
+.text-accent-green {
+  color: #34d399;
+}
+
+.text-accent-red {
+  color: #f87171;
+}
+
+.text-accent-yellow {
+  color: #facc15;
 }

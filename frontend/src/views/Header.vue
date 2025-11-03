@@ -1,37 +1,57 @@
 <template>
   <header class="header">
-    <div class="logo">
-      <router-link to="/">Dashboard</router-link>
+    <div class="logo" @click="goDashboard">
+      <span class="dashboard-link">Dashboard</span>
     </div>
+
     <div class="user-section">
-      <span class="greeting">Hello, <strong>{{ userName }}</strong></span>
-      <button v-if="!isLoggedIn" @click="goLogin">Login</button>
-      <button v-else @click="logout">Logout</button>
+      <span class="greeting">Hello, <strong>{{ store.userName }}</strong></span>
+
+      <button v-if="!store.isLoggedIn" @click="goLogin">Login</button>
+      <button v-else @click="goLogout">Logout</button>
     </div>
   </header>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { store } from '../store'
 import { useRouter } from 'vue-router'
 
 export default {
   name: 'Header',
   setup() {
-    const userName = ref('Guest')
-    const isLoggedIn = ref(false)
     const router = useRouter()
 
     const goLogin = () => {
       router.push('/login')
     }
 
-    const logout = () => {
-      isLoggedIn.value = false
-      userName.value = 'Guest'
+    const goLogout = () => {
+      store.logout()
+      router.push('/')
     }
 
-    return { userName, isLoggedIn, goLogin, logout }
+    const goDashboard = () => {
+      if (!store.isLoggedIn) {
+        router.push('/')
+      } else {
+        switch (store.userRole) {
+          case 'admin':
+            router.push('/dashboard/admin')
+            break
+          case 'teller':
+            router.push('/dashboard/teller')
+            break
+          case 'customer':
+            router.push('/dashboard/customer')
+            break
+          default:
+            router.push('/')
+        }
+      }
+    }
+
+    return { store, goLogin, goLogout, goDashboard }
   }
 }
 </script>

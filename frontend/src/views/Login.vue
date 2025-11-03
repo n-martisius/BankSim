@@ -4,7 +4,12 @@
       <h1>Login</h1>
       <form @submit.prevent="login">
         <input type="text" v-model="username" placeholder="Username" required />
-        <input type="password" v-model="password" placeholder="Password" required />
+        <select v-model="role" required>
+          <option disabled value="">Select Role</option>
+          <option value="admin">Admin</option>
+          <option value="teller">Teller</option>
+          <option value="customer">Customer</option>
+        </select>
         <button type="submit">Log In</button>
       </form>
     </div>
@@ -13,22 +18,26 @@
 
 <script>
 import { ref } from 'vue'
+import { store } from '../store'
 import { useRouter } from 'vue-router'
 
 export default {
-  name: 'Login',
   setup() {
     const username = ref('')
-    const password = ref('')
+    const role = ref('')
     const router = useRouter()
 
     const login = () => {
-      // Demo: just redirect after "login"
-      alert(`Logging in as ${username.value}`)
-      router.push('/')  // redirect to home
+      if (!username.value.trim() || !role.value) {
+        alert('Please enter a username and select a role.')
+        return
+      }
+
+      store.login(username.value, role.value)
+      router.push(`/dashboard/${role.value}`)
     }
 
-    return { username, password, login }
+    return { username, role, login }
   }
 }
 </script>

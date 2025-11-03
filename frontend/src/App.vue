@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Header />
-    <router-view /> <!-- optional if using Vue Router -->
+    <router-view />
   </div>
 </template>
 
@@ -13,6 +13,6 @@ export default {
   components: {
     Header,
     Home
-  }
+  },
 }
 </script>
