@@ -21,6 +21,21 @@
       <h2>Activity Overview</h2>
       <canvas id="adminChart" height="100"></canvas>
     </div>
+
+<div class="dashboard-grid">
+    <div class="dashboard-card">
+        <h2>Manage Tellers</h2>
+        <button class="dashboard-btn" @click="goManageTellers" style="background:#60a5fa">Go</button>
+      </div>
+      <div class="dashboard-card">
+        <h2>Register Teller</h2>
+        <button class="dashboard-btn" @click="goRegisterTeller" style="background:#34d399">Go</button>
+      </div>
+      <div class="dashboard-card">
+        <h2>Close Teller Account</h2>
+        <button class="dashboard-btn" @click="goManageTellers" style="background:#f87171">Go</button>
+      </div>
+</div>
   </div>
 </template>
 
@@ -28,6 +43,11 @@
 import { onMounted } from 'vue'
 import Chart from 'chart.js/auto'
 import '../../main.css'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+const goManageTellers = () => router.push('/admin/manage-tellers')
+const goRegisterTeller = () => router.push('/admin/register-teller')
 
 onMounted(() => {
   const ctx = document.getElementById('adminChart')

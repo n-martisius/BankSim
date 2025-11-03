@@ -4,13 +4,31 @@ import Login from '../views/Login.vue'
 import AdminDashboard from '../views/dashboards/AdminDashboard.vue'
 import TellerDashboard from '../views/dashboards/TellerDashboard.vue'
 import CustomerDashboard from '../views/dashboards/CustomerDashboard.vue'
+import EditTeller from '../views/admin/EditTeller.vue'
+import ManageTellers from '../views/admin/ManageTellers.vue'
+import RegisterTeller from '../views/admin/RegisterTeller.vue'
+
 
 const routes = [
   { path: '/', component: Home },
   { path: '/login', component: Login },
   { path: '/dashboard/admin', component: AdminDashboard },
   { path: '/dashboard/teller', component: TellerDashboard },
-  { path: '/dashboard/customer', component: CustomerDashboard }
+  { path: '/dashboard/customer', component: CustomerDashboard },
+  {
+    path: '/admin/manage-tellers',
+    component: ManageTellers
+  },
+  {
+    path: '/admin/register-teller',
+    component: RegisterTeller
+  },
+  {
+    path: '/admin/edit-teller/:id',
+    name: 'EditTeller',
+    component: EditTeller
+  }
+
 ]
 
 const router = createRouter({

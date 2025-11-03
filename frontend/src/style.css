@@ -302,6 +302,8 @@ button:hover {
   background: rgba(255, 255, 255, 0.1);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
+  margin-bottom: 2rem;
+
 }
 
 .dashboard-card:hover {
@@ -374,4 +376,51 @@ button:hover {
 
 .text-accent-yellow {
   color: #facc15;
+}
+
+
+.input-field {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+}
+
+.teller-table-container {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+
+.teller-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.teller-table th,
+.teller-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.teller-table th {
+  background-color: rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+}
+
+.teller-table tr:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.dashboard-btn.edit-btn {
+  background-color: #34d399;
+  margin-right: 0.5rem;
+}
+
+.dashboard-btn.delete-btn {
+  background-color: #f87171;
 }
