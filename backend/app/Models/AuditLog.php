@@ -6,21 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class AuditLog extends Model
 {
-    public $timestamps = false; // created_at only, no updated_at
+    public $timestamps = false;
 
     protected $fillable = [
         'user_id',
-        'message',
         'event_type',
         'event_level',
-        'created_at',
+        'message',
+        'created_at', // manually set this
+        'affected_user_ids', // if you store multiple affected users
     ];
 
-    // --------------------------------
-    // Relationships
-    // --------------------------------
+    protected $casts = [
+        'affected_user_ids' => 'array',
+        'created_at' => 'datetime',
+    ];
 
-    // The user who triggered the event
+    // User who performed the action
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -5,10 +5,16 @@ export const store = reactive({
   userName: 'Guest',
   userRole: null, // 'admin' | 'teller' | 'customer'
 
-  login(name, role) {
-    this.isLoggedIn = true
-    this.userName = name
-    this.userRole = role
+  state: {
+    user: null,
+    token: null // placeholder if you later use API tokens
+  },
+
+  login(username, role) {
+    this.state.user = { username, role }
+    // for now, we fake a token
+    this.state.token = 'fake-token'
+    console.log('Logged in as:', this.state.user)
   },
 
   logout() {
@@ -16,4 +22,6 @@ export const store = reactive({
     this.userName = 'Guest'
     this.userRole = null
   }
+
+  
 })
