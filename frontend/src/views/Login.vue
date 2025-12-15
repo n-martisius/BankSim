@@ -3,16 +3,13 @@
     <div class="login-card">
       <h1>Login</h1>
       <form @submit.prevent="login">
-        <input type="text" v-model="username" placeholder="Username" required />
+        <input type="email" v-model="email" placeholder="Email" required />
         <input type="password" v-model="password" placeholder="Password" required />
-        <select v-model="role" required>
-          <option disabled value="">Select Role</option>
-          <option value="admin">Admin</option>
-          <option value="teller">Teller</option>
-          <option value="customer">Customer</option>
-        </select>
-        <button type="submit">Log In</button>
+        <button type="submit" :disabled="loading">
+          {{ loading ? 'Logging in...' : 'Log In' }}
+        </button>
       </form>
+      <p v-if="error" class="error">{{ error }}</p>
     </div>
   </main>
 </template>
@@ -21,26 +18,58 @@
 import { ref } from 'vue'
 import { store } from '../store'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
+import api from '../plugins/axios'
 
 export default {
   setup() {
-    const username = ref('')
-    const password = ref('') // fake password
-    const role = ref('')
+    const email = ref('')
+    const password = ref('')
+    const error = ref('')
+    const loading = ref(false)
     const router = useRouter()
 
-    const login = () => {
-      if (!username.value.trim() || !role.value || !password.value.trim()) {
-        alert('Please enter a username, password, and select a role.')
-        return
-      }
+    const login = async () => {
+      error.value = ''
+      loading.value = true
 
-      // fake login, password not used
-      store.login(username.value, role.value)
-      router.push(`/dashboard/${role.value}`)
+      try {
+        const response = await api.post('/auth/login', {
+          email: email.value,
+          password: password.value
+        })
+
+        const { token, user} = response.data
+
+        // save in store
+        store.login(token, user)
+
+        // redirect based on role
+        switch (user.role) {
+          case 'admin':
+            router.push('/dashboard/admin')
+            break
+          case 'teller':
+            router.push('/dashboard/teller')
+            break
+          case 'customer':
+            router.push('/dashboard/customer')
+            break
+          default:
+            router.push('/') // fallback
+        }
+      } catch (err) {
+        if (err.response) {
+          error.value = err.response.data.message || 'Login failed'
+        } else {
+          error.value = 'Network error'
+        }
+      } finally {
+        loading.value = false
+      }
     }
 
-    return { username, password, role, login }
+    return { email, password, login, loading, error }
   }
 }
 </script>

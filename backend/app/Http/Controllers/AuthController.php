@@ -21,10 +21,10 @@ class AuthController extends Controller
      * @param string|null $message Optional custom message
      * @param array|null $affectedUserIds Optional list of affected users
      */
-    protected function logAction(User $actor, string $event, array $affectedUserIds = [], string $level = 'info', ?string $message = null)
+    protected function logAction(?User $actor, string $event, string $level = 'info', ?string $message = null, array $affectedUserIds = [])
     {
         AuditLog::create([
-            'user_id'           => $actor->id,
+            'user_id'           => $actor?->id,
             'event_type'        => $event,
             'event_level'       => $level,
             'message'           => $message ?? $event,

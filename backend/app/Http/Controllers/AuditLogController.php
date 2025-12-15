@@ -36,9 +36,25 @@ class AuditLogController extends Controller
                 return response()->json(['message' => 'user_id parameter is required for tellers'], 400);
             }
 
+            $checkTeller = User::where('id', $customerId)->where('role', 'teller')->first();
+            if ($checkTeller !== null) {
+                if ($checkTeller->id !== $authUser->id) {
+                    return response()->json(['message' => 'Forbidden: You can only access logs of your own.'], 403);
+                } else {
+                    $query->where(function ($q) use ($customerId) {
+                        $q->where('user_id', $customerId)
+                            ->orWhereRaw("JSON_CONTAINS(IFNULL(affected_user_ids, '[]'), JSON_ARRAY(?))", [$customerId]);
+                    });
+
+                    $logs = $query->orderBy('created_at', 'desc')->get();
+
+                    return response()->json($logs);
+                }
+            }
+
             $customer = User::where('id', $customerId)->where('role', 'customer')->first();
             if (!$customer) {
-                return response()->json(['message' => 'Customer not found or invalid'], 404);
+                return response()->json(['message' => "Customer {$customerId} not found or invalid"], 404);
             }
 
             $query->where(function ($q) use ($customerId) {

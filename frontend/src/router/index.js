@@ -12,37 +12,58 @@ import RegisterCustomer from '../views/teller/RegisterCustomer.vue'
 import CustomerSearch from '../views/teller/CustomerSearch.vue'
 import CustomerAccount from '../views/teller/CustomerAccount.vue'
 import TransferFunds from '../views/teller/TransferFunds.vue'
+import Profile from '../views/Profile.vue'
 
+import { store } from '../store' // your store
 
 
 const routes = [
   { path: '/', component: Home },
   { path: '/login', component: Login },
-  { path: '/dashboard/admin', component: AdminDashboard },
-  { path: '/dashboard/teller', component: TellerDashboard },
-  { path: '/dashboard/customer', component: CustomerDashboard },
-  {
-    path: '/admin/manage-tellers',
-    component: ManageTellers
-  },
-  {
-    path: '/admin/register-teller',
-    component: RegisterTeller
-  },
-  {
-    path: '/admin/edit-teller/:id',
-    name: 'EditTeller',
-    component: EditTeller
-  },
-  { path: '/teller/register-customer', component: RegisterCustomer },
-  { path: '/teller/customer-search', component: CustomerSearch },
-  { path: '/teller/customer-account/:id', name: 'CustomerAccount', component: CustomerAccount },
-  { path: '/teller/transfer-funds', component: TransferFunds }
+
+  { path: '/dashboard/admin', component: AdminDashboard, meta: { roles: ['admin'] } },
+  { path: '/dashboard/teller', component: TellerDashboard, meta: { roles: ['teller'] } },
+  { path: '/dashboard/customer', component: CustomerDashboard, meta: { roles: ['customer'] } },
+
+  { path: '/admin/manage-tellers', component: ManageTellers, meta: { roles: ['admin'] } },
+  { path: '/admin/register-teller', component: RegisterTeller, meta: { roles: ['admin'] } },
+  { path: '/admin/edit-teller/:id', name: 'EditTeller', component: EditTeller, meta: { roles: ['admin'] } },
+
+  { path: '/teller/register-customer', component: RegisterCustomer, meta: { roles: ['teller'] } },
+  { path: '/teller/customer-search', component: CustomerSearch, meta: { roles: ['teller'] } },
+  { path: '/teller/customer-account/:id', name: 'CustomerAccount', component: CustomerAccount, meta: { roles: ['teller'] } },
+  { path: '/teller/transfer-funds', component: TransferFunds, meta: { roles: ['teller'] } },
+  { path: '/profile', component: Profile, meta: { roles: ['admin', 'teller', 'customer'] } },
 ]
+
 
 const router = createRouter({
   history: createWebHistory(),
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  const user = store.state.user
+  const isLoggedIn = !!user
+
+  // If route has no meta.roles, allow everyone
+  if (!to.meta.roles) {
+    return next()
+  }
+
+  // Redirect if not logged in
+  if (!isLoggedIn) {
+    return next('/login')
+  }
+
+  // Redirect if user role is not allowed
+  if (!to.meta.roles.includes(user.role)) {
+    alert('You do not have permission to access this page.')
+    return next(false) // cancel navigation
+  }
+
+  next()
+})
+
 
 export default router

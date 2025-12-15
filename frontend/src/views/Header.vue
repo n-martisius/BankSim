@@ -5,8 +5,8 @@
     </div>
 
     <div class="user-section">
-      <span class="greeting">Hello, <strong>{{ store.userName }}</strong></span>
-
+      <span class="greeting">Hello, <strong>{{ store.state.name }}</strong></span>
+      <button v-if="store.isLoggedIn" @click="goProfile">Profile</button>
       <button v-if="!store.isLoggedIn" @click="goLogin">Login</button>
       <button v-else @click="goLogout">Logout</button>
     </div>
@@ -26,16 +26,20 @@ export default {
       router.push('/login')
     }
 
+    const goProfile = () => {
+      router.push('/profile')
+    }
+
     const goLogout = () => {
-      store.logout()
       router.push('/')
+            store.logout()
     }
 
     const goDashboard = () => {
       if (!store.isLoggedIn) {
         router.push('/')
       } else {
-        switch (store.userRole) {
+        switch (store.state.role) {
           case 'admin':
             router.push('/dashboard/admin')
             break
@@ -51,7 +55,7 @@ export default {
       }
     }
 
-    return { store, goLogin, goLogout, goDashboard }
+    return { store, goLogin, goLogout, goDashboard, goProfile }
   }
 }
 </script>
