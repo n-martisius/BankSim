@@ -34,15 +34,19 @@ export default {
       loading.value = true
 
       try {
+        await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
+
+
         const response = await api.post('/auth/login', {
           email: email.value,
           password: password.value
-        })
+        }, { withCredentials: true })
 
         const { token, user} = response.data
 
         // save in store
         store.login(token, user)
+
 
         // redirect based on role
         switch (user.role) {

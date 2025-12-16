@@ -3,42 +3,124 @@
     <h1>Search Customer</h1>
 
     <div class="dashboard-card">
-      <label>Customer ID or Email:</label>
-      <input v-model="query" type="text" class="input-field"/>
-      <button class="dashboard-btn" style="background:#60a5fa" @click="searchCustomer">Search</button>
+      <label>Search by ID, Name, or Email:</label>
+      <input
+        v-model="query"
+        type="text"
+        class="input-field"
+        placeholder="Enter search term"
+      />
+      <button
+        class="dashboard-btn"
+        style="background:#60a5fa"
+        @click="filterResults"
+      >
+        Search
+      </button>
     </div>
 
-    <CustomerList v-if="results.length" :customers="results" @open="openCustomer"/>
+    <div v-if="error" class="error">{{ error }}</div>
+
+    <div v-if="filteredResults.length > 0" class="customer-list">
+      <div
+        v-for="customer in filteredResults"
+        :key="customer.id"
+        class="customer-row"
+        @click="openCustomer(customer)"
+      >
+        <strong>{{ customer.name || 'N/A' }}</strong>
+        <span>{{ customer.email || 'N/A' }}</span>
+        <span>ID: {{ customer.id }}</span>
+        <span>Status: {{ customer.status || 'N/A' }}</span>
+      </div>
+    </div>
+
+    <p v-else-if="allCustomers.length > 0" class="empty">
+      No matching customers found.
+    </p>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import CustomerList from '../components/teller/CustomerList.vue'
+import api from '../../plugins/axios'
 
 const router = useRouter()
+
 const query = ref('')
-const results = ref([])
+const allCustomers = ref([])       // full data from backend
+const filteredResults = ref([])    // filtered on frontend
+const error = ref('')
 
-// Dummy data
-const allCustomers = [
-  { id: 1, name: 'John Doe', email: 'john@bank.com', balance: 1200 },
-  { id: 2, name: 'Jane Smith', email: 'jane@bank.com', balance: 450 },
-]
+// fetch all customers on mount
+onMounted(async () => {
+  error.value = ''
+  try {
+    const response = await api.get('/users', { params: { role: 'customer' } })
+    allCustomers.value = Array.isArray(response.data) ? response.data : response.data?.data || []
+    filteredResults.value = [...allCustomers.value]
+  } catch (err) {
+    console.error(err)
+    error.value = 'Failed to load customers'
+  }
+})
 
-const searchCustomer = () => {
-  results.value = allCustomers.filter(c => 
-    c.id.toString() === query.value || c.email.includes(query.value)
-  )
-  if (!results.value.length) alert('No customer found')
+// frontend filtering function
+const filterResults = () => {
+  const term = query.value.toLowerCase().trim()
+  if (!term) {
+    filteredResults.value = [...allCustomers.value]
+    return
+  }
+
+  filteredResults.value = allCustomers.value.filter(c => {
+    return (
+      String(c.id).includes(term) ||
+      (c.name && c.name.toLowerCase().includes(term)) ||
+      (c.email && c.email.toLowerCase().includes(term))
+    )
+  })
+
+  if (filteredResults.value.length === 0) {
+    error.value = 'No matching customers found'
+  } else {
+    error.value = ''
+  }
 }
 
+// navigate to customer account
 const openCustomer = (customer) => {
-  router.push({ name: 'CustomerAccount', params: { id: customer.id } })
+  router.push(`/teller/customer-account/${customer.id}`)
 }
 </script>
 
 <style scoped>
 @import '../../style.css';
+
+.error {
+  margin-top: 1rem;
+  color: #dc2626;
+}
+
+.customer-list {
+  margin-top: 1rem;
+}
+
+.customer-row {
+  padding: 0.5rem;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+}
+
+.customer-row:hover {
+  background-color: #f0f0f0;
+}
+
+.empty {
+  margin-top: 1rem;
+  font-style: italic;
+}
 </style>

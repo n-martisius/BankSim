@@ -32,11 +32,16 @@ class AccountController extends Controller
     {
         $user = $request->user();
 
+        // Base query: only active accounts
+        $query = Account::where('status', '!=', 'closed');
+
         if ($user->role === 'customer') {
-            $accounts = Account::where('user_id', $user->id)->get();
+            // Customers see only their active accounts
+            $accounts = $query->where('user_id', $user->id)->get();
         } else {
+            // Admins see tellers, tellers see customers
             $targetRole = $user->role === 'admin' ? 'teller' : 'customer';
-            $accounts = Account::whereHas('user', fn($q) => $q->where('role', $targetRole))->get();
+            $accounts = $query->whereHas('user', fn($q) => $q->where('role', $targetRole))->get();
         }
 
         $this->logAction(
@@ -49,6 +54,7 @@ class AccountController extends Controller
 
         return response()->json($accounts);
     }
+
 
     /**
      * Show account
@@ -136,6 +142,10 @@ class AccountController extends Controller
     {
         $actor = $request->user();
         $owner = $account->user;
+
+        if ($actor->role === 'customer') {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
 
         if (!in_array($actor->role, ['admin', 'teller'])) {
             return response()->json(['message' => 'Forbidden'], 403);

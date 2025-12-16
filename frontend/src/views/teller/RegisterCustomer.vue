@@ -48,7 +48,7 @@ const registerCustomer = async () => {
 
   try {
     const payload = {
-      full_name: fullName.value,  // sending full name as 'name' field for backend
+      full_name: fullName.value,  
       name: name.value,
       email: email.value,
       phone: phone.value,

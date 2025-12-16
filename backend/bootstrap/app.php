@@ -12,7 +12,22 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Ensure the `web` middleware group contains the session / cookie
+        // and CSRF middleware required for Sanctum's cookie-based SPA auth.
+        $middleware->group('web', [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+        ]);
+
+        // Define the `api` middleware group explicitly so cookie-based (SPA)
+        // authentication via Sanctum works as expected. This matches the
+        // middleware ordering you requested.
+        $middleware->group('api', [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -19,6 +19,7 @@ export const store = reactive({
     this.state.user_id = user.id
     console.log('Logged in as:', user.name)
     localStorage.setItem('auth_token', token)
+    
   },
 
   logout() {

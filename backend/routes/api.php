@@ -17,7 +17,10 @@ use App\Http\Controllers\AuditLogController as AuditLogController;
 | These routes are loaded by the RouteServiceProvider within a group
 | which is assigned the "api" middleware group.
 |
+
 */
+
+
 
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
@@ -41,8 +44,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/accounts', [AccountController::class, 'store']);
     Route::put('/accounts/{account}', [AccountController::class, 'update']);
 
-    // Transactions: list, show, create
-    Route::apiResource('transactions', TransactionController::class)->only(['index', 'show', 'store']);
+    // List transactions
+    Route::get('/transactions', [TransactionController::class, 'index']);
+
+    // View single transaction
+    Route::get('/transactions/{transaction}', [TransactionController::class, 'show']);
+
+    // Create deposit / withdrawal / transfer
+    Route::post('/transactions', [TransactionController::class, 'store']);
 
     // Transfer between accounts
     Route::post('transfer', [TransactionController::class, 'transfer']);

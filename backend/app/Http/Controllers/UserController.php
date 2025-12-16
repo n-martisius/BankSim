@@ -34,6 +34,7 @@ class UserController extends Controller
             'email'    => $user->email,
             'role'     => $user->role,
             'status'   => $user->status,
+            'full_name'   => $user->full_name,
         ]);
     }
 
@@ -42,11 +43,21 @@ class UserController extends Controller
         $user = $request->user();
 
         if ($user->role === 'admin') {
-            $users = User::select('id', 'name', 'email', 'role', 'status', 'created_at')->get();
+            $users = User::select('id', 'name', 'full_name', 'email', 'role', 'status', 'created_at')->get();
         } elseif ($user->role === 'teller') {
             $users = User::where('role', 'customer')
-                ->select('id', 'name', 'email', 'role', 'status', 'created_at')
+                ->select('id', 'name', 'full_name', 'email', 'role', 'status', 'created_at')
                 ->get();
+            $query = User::where('role', 'customer');
+
+            if ($request->filled('search')) {
+                $search = $request->search;
+
+                $query->where(function ($q) use ($search) {
+                    $q->where('email', 'like', "%{$search}%")
+                        ->orWhere('id', $search);
+                });
+            }
         } else {
             $this->logAction($user, 'user.list_forbidden', [$user->id], 'warning', 'Tried to list users without permission');
             return response()->json(['message' => 'Forbidden'], 403);
@@ -67,6 +78,7 @@ class UserController extends Controller
             'password' => 'required|string|min:8',
             'role'     => 'required|in:admin,teller,customer',
             'status'   => 'nullable|in:active,suspended,closed',
+            'full_name'   => 'required|string|max:255',
         ]);
 
         // Role-based restrictions
@@ -89,6 +101,7 @@ class UserController extends Controller
             'password' => Hash::make($data['password']),
             'role'     => $data['role'],
             'status'   => $data['status'] ?? 'active',
+            'full_name'   => $data['full_name'],
         ]);
 
         $this->logAction($authUser, 'user.created', [$user->id], 'info', "Created user ID {$user->id}");
