@@ -68,7 +68,7 @@ class TransactionController extends Controller
 
         $data = $request->validate([
             'type'             => 'required|in:deposit,withdrawal,transfer',
-            'from_account_id'  => 'required|exists:accounts,id',
+            'from_account_id'  => 'nullable|exists:accounts,id',
             'to_account_id'    => 'nullable|exists:accounts,id|different:from_account_id',
             'amount'           => 'required|numeric|min:0.01',
             'details'          => 'nullable|string'
@@ -77,7 +77,9 @@ class TransactionController extends Controller
         DB::beginTransaction();
 
         try {
-            $from = Account::lockForUpdate()->find($data['from_account_id']);
+            $from  = isset($data['from_account_id'])
+                ? Account::lockForUpdate()->find($data['from_account_id'])
+                : null;
             $to   = isset($data['to_account_id'])
                 ? Account::lockForUpdate()->find($data['to_account_id'])
                 : null;
@@ -98,17 +100,38 @@ class TransactionController extends Controller
                 $to->balance += $data['amount'];
                 $to->save();
             }
-
-            $transaction = Transaction::create([
-                'user_id'         => $user->id,
-                'from_account_id' => $from->id,
-                'to_account_id'   => $to?->id,
-                'type'            => $data['type'],
-                'amount'          => $data['amount'],
-                'currency'        => 'EUR',
-                'status'          => 'completed',
-                'details'         => $data['details']
-            ]);
+            if ($data['type'] === 'deposit') {
+                $transaction = Transaction::create([
+                    'user_id'         => $user->id,
+                    'to_account_id'   => $to?->id,
+                    'type'            => $data['type'],
+                    'amount'          => $data['amount'],
+                    'currency'        => 'EUR',
+                    'status'          => 'completed',
+                    'details'         => $data['details']
+                ]);
+            } else if ($data['type'] === 'withdrawal') {
+                $transaction = Transaction::create([
+                    'user_id'         => $user->id,
+                    'from_account_id' => $from->id,
+                    'type'            => $data['type'],
+                    'amount'          => $data['amount'],
+                    'currency'        => 'EUR',
+                    'status'          => 'completed',
+                    'details'         => $data['details']
+                ]);
+            } else if ($data['type'] === 'transfer') {
+                $transaction = Transaction::create([
+                    'user_id'         => $user->id,
+                    'from_account_id' => $from->id,
+                    'to_account_id'   => $to?->id,
+                    'type'            => $data['type'],
+                    'amount'          => $data['amount'],
+                    'currency'        => 'EUR',
+                    'status'          => 'completed',
+                    'details'         => $data['details']
+                ]);
+            }
 
             DB::commit();
 

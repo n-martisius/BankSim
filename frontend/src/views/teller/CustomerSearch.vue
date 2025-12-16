@@ -97,30 +97,4 @@ const openCustomer = (customer) => {
 
 <style scoped>
 @import '../../style.css';
-
-.error {
-  margin-top: 1rem;
-  color: #dc2626;
-}
-
-.customer-list {
-  margin-top: 1rem;
-}
-
-.customer-row {
-  padding: 0.5rem;
-  border-bottom: 1px solid #ccc;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-}
-
-.customer-row:hover {
-  background-color: #f0f0f0;
-}
-
-.empty {
-  margin-top: 1rem;
-  font-style: italic;
-}
 </style>

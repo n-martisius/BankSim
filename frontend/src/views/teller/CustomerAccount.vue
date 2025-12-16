@@ -30,11 +30,19 @@
           </button>
         </div>
       </div>
-
+<!-- Close customer button -->
+<button
+  @click="closeCustomer"
+  class="btn-danger"
+  style="margin-top: 1rem;"
+>
+  Close Customer
+</button>
       <div v-if="customerAccounts.length === 0" class="error">
         No accounts found for this customer.
       </div>
     </div>
+    
   </div>
 </template>
 
@@ -45,6 +53,7 @@ import api from '../../plugins/axios'
 
 const route = useRoute()
 const router = useRouter()
+
 const customerId = Number(route.params.id)
 
 const accounts = ref([])
@@ -52,7 +61,7 @@ const loading = ref(true)
 const error = ref('')
 
 const customerAccounts = computed(() =>
-  accounts.value.filter(acc => acc.user_id === customerId)
+  accounts.value.filter(acc => acc.user_id === customerId && acc.status !== 'closed')
 )
 
 const fetchAccounts = async () => {
@@ -73,28 +82,62 @@ const fetchAccounts = async () => {
 const formatBalance = (amount) =>
   new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'EUR' }).format(amount)
 
-// Navigate to transfer/transactions page
 const goToTransactions = (account) => {
-  router.push({
-    path: '/teller/transfer-funds',
-    query: { accountId: account.id }
+  router.push({ 
+    name: 'TransferFunds', 
+    params: { 'account': account.id } 
   })
 }
 
-// "Close" account by updating its status
+
+// Close account
 const closeAccount = async (account) => {
   if (!confirm(`Are you sure you want to close account ${account.number}?`)) return
 
   try {
+    // Close the account first
     await api.put(`/accounts/${account.id}`, { status: 'closed' })
-    // Update the local account list so the UI reflects the change
+
+    // Update local state
     accounts.value = accounts.value.map(acc =>
       acc.id === account.id ? { ...acc, status: 'closed' } : acc
     )
-    alert('Account closed successfully')
+
+    alert(`Account ${account.number} closed successfully`)
+
+    // Check if this was the last active account
+    const remaining = customerAccounts.value.filter(acc => acc.id !== account.id)
+    if (remaining.length === 0) {
+      // No more active accounts → close customer
+      await api.put(`/users/${customerId}`, { status: 'closed' })
+      alert('Customer has no active accounts and was closed')
+    }
+
   } catch (err) {
     console.error(err)
     alert('Failed to close account')
+  }
+}
+// Close the customer even if they have no accounts
+const closeCustomer = async () => {
+  if (!confirm('Are you sure you want to close this customer?')) return
+
+  try {
+    // Optional: warn if customer has active accounts
+    const activeAccounts = customerAccounts.value
+    if (activeAccounts.length > 0) {
+      if (!confirm('This customer has active accounts. Closing will not affect accounts. Continue?')) {
+        return
+      }
+    }
+
+    await api.put(`/users/${customerId}`, { status: 'closed' })
+    alert('Customer closed successfully')
+    router.push('/teller/customer-search')
+
+  } catch (err) {
+    console.error(err)
+    alert('Failed to close customer')
   }
 }
 

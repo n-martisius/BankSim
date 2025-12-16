@@ -59,8 +59,16 @@ const fetchLogs = async () => {
   try {
     const userId = store.state.user.id
     const response = await api.get(`/audit-logs?user_id=${userId}`)
-        // Filter out login messages
-    logs.value = response.data.filter(log => log.message !== 'User logged in')
+    
+    // Filter out login messages
+    let filteredLogs = response.data.filter(log => log.message !== 'User logged in')
+
+    // Sort by created_at descending (most recent first)
+    filteredLogs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+
+    // Only take the first 10
+    logs.value = filteredLogs.slice(0, 10)
+
   } catch (err) {
     console.error(err)
     error.value = 'Failed to fetch logs'

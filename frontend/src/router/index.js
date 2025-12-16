@@ -27,12 +27,18 @@ const routes = [
 
   { path: '/admin/manage-tellers', component: ManageTellers, meta: { roles: ['admin'] } },
   { path: '/admin/register-teller', component: RegisterTeller, meta: { roles: ['admin'] } },
-  { path: '/admin/edit-teller/:id', name: 'EditTeller', component: EditTeller, meta: { roles: ['admin'] } },
+  { path: '/admin/edit-teller/:id', component: EditTeller, meta: { roles: ['admin'] } },
 
   { path: '/teller/register-customer', component: RegisterCustomer, meta: { roles: ['teller'] } },
   { path: '/teller/customer-search', component: CustomerSearch, meta: { roles: ['teller'] } },
   { path: '/teller/customer-account/:id', name: 'CustomerAccount', component: CustomerAccount, meta: { roles: ['teller'] } },
-  { path: '/teller/transfer-funds', component: TransferFunds, meta: { roles: ['teller'] } },
+ { 
+  path: '/teller/transfer-funds/:account', 
+  name: 'TransferFunds',   // <--- add this
+  component: TransferFunds, 
+  meta: { roles: ['teller'] } 
+},
+
   { path: '/profile', component: Profile, meta: { roles: ['admin', 'teller', 'customer'] } },
 ]
 

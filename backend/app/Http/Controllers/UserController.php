@@ -149,6 +149,7 @@ class UserController extends Controller
             'email'    => 'sometimes|email|unique:users,email,' . $user->id,
             'password' => 'sometimes|string|min:8',
             'status'   => 'sometimes|in:active,suspended,closed',
+            'full_name'   => 'sometimes|string|max:255',
         ]);
 
         if (isset($data['password'])) {

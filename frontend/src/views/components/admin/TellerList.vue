@@ -6,8 +6,9 @@
       <thead>
         <tr>
           <th>ID</th>
-          <th>Name</th>
+          <th>Full Name</th>
           <th>Email</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -17,6 +18,7 @@
           <td>{{ teller.id }}</td>
           <td>{{ teller.full_name }}</td>
           <td>{{ teller.email }}</td>
+          <td>{{ teller.status }}</td>
           <td>
             <button
               class="dashboard-btn edit-btn"
@@ -47,6 +49,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import api from '../../../plugins/axios' 
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const users = ref([])
 
@@ -60,7 +65,9 @@ onMounted(async () => {
       withCredentials: true
     })
 
-    users.value = response.data
+    users.value = response.data.filter(
+      user => user.status !== 'closed'
+    )
   } catch (err) {
     console.error('Failed to fetch users', err)
   }

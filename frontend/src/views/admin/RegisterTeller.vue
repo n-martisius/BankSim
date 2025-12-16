@@ -32,13 +32,14 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../../plugins/axios'
 
+const fullName = ref('')
 const name = ref('')
 const email = ref('')
 const password = ref('')
+
 const loading = ref(false)
 const success = ref('')
 const error = ref('')
-const fullName = ref('')
 
 const router = useRouter()
 
@@ -48,27 +49,37 @@ const registerTeller = async () => {
   error.value = ''
 
   try {
-    const payload = {
-      name: name.value,
-      email: email.value,
-      password: password.value,
-      full_name: fullName.value,
-      role: 'teller' // assign teller role
-    }
+    // 🔹 Sanctum-protected API route
+    const response = await api.post(
+      '/users',
+      {
+        name: name.value,
+        full_name: fullName.value,
+        email: email.value,
+        password: password.value,
+        role: 'teller'
+      },
+      {
+        withCredentials: true 
+      }
+    )
 
-    const response = await api.post('/users', payload)
+    success.value = `Teller ${response.data.full_name} registered successfully`
 
-    success.value = `Teller ${response.data.name} registered successfully!`
-
-    // Optional: redirect after 1 second
-    setTimeout(() => router.push('/admin/manage-tellers'), 1000)
+    setTimeout(() => {
+      router.push('/admin/manage-tellers')
+    }, 1000)
 
   } catch (err) {
     console.error(err)
-    if (err.response && err.response.data) {
-      error.value = err.response.data.message || 'Failed to register teller'
+
+    if (err.response?.data?.message) {
+      error.value = err.response.data.message
+    } else if (err.response?.data?.errors) {
+      // Laravel validation errors
+      error.value = Object.values(err.response.data.errors)[0][0]
     } else {
-      error.value = 'Network error'
+      error.value = 'Failed to register teller'
     }
   } finally {
     loading.value = false
